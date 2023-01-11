@@ -3,11 +3,14 @@
 pragma solidity ^0.8.13;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC20/IERC20.sol";
-
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract marketplaceItem1{
+
+   AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
+
     mapping(address => bool) public alreadyBought;
-    uint public price = 10;
+    uint public price = 10*10**18;
     address public owner = payable(msg.sender);
 
     IERC20 public usdcFToken = IERC20(0xd9145CCE52D386f254917e481eB44e9943F39138);
@@ -27,8 +30,20 @@ contract marketplaceItem1{
        return alreadyBought[msg.sender];
     }
 
-    function payInETH() public returns(bool){
-      //get chainlink data
-      return true;
+    function getCurrentPriceofEth() public view returns(int){
+       (/*data1*/, int priceOfETH,/*data1*/ ,/*data1*/,/*data1*/) = priceFeed.latestRoundData();
+       return priceOfETH / 10**8;
+    }
+
+    function getPriceOfETH() public view returns(int){
+       return int(price)/getCurrentPriceofEth();
+    }
+
+    function patInETH() public payable returns(bool){
+       require(msg.value == uint(getPriceOfETH()), "amount is insufficient");
+       (bool sent, /*data*/) = owner.call{value: msg.value}("");
+       require(sent == true, "error occured");
+      alreadyBought[msg.sender] = true;
+      return alreadyBought[msg.sender];
     }
 }

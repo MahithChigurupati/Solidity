@@ -13,8 +13,8 @@ contract marketplaceItem1{
     uint public price = 10*10**18;
     address public owner = payable(msg.sender);
 
-    IERC20 public usdcFToken = IERC20(0xd9145CCE52D386f254917e481eB44e9943F39138);
-    IERC20 public usdtFToken = IERC20(0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B);
+    IERC20 public usdcFToken = IERC20(0x1194D7A94fe9894Ce4f411DA64733a61720bff6a);
+    IERC20 public usdtFToken = IERC20(0x1194D7A94fe9894Ce4f411DA64733a61720bff6a);
 
     function payInUSDC() public returns(bool){
        require(alreadyBought[msg.sender]==false,"you already bought");
@@ -39,11 +39,21 @@ contract marketplaceItem1{
        return int(price)/getCurrentPriceofEth();
     }
 
-    function patInETH() public payable returns(bool){
+    function payInETH() public payable returns(bool){
        require(msg.value == uint(getPriceOfETH()), "amount is insufficient");
        (bool sent, /*data*/) = owner.call{value: msg.value}("");
        require(sent == true, "error occured");
-      alreadyBought[msg.sender] = true;
-      return alreadyBought[msg.sender];
+       alreadyBought[msg.sender] = true;
+       return alreadyBought[msg.sender];
+    }
+
+    function changeOwner(address newOwner) public{
+       require(msg.sender == owner, "Not owner");
+       owner = newOwner;
+    }
+
+    function changePrice(uint newPrice) public{
+       require(msg.sender == owner, "Not owner");
+       price = newPrice;
     }
 }

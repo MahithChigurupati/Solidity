@@ -6,6 +6,6 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contr
 contract usdc is ERC20("testUSDC","testUSDC"){
 
     function mintTwenty() public{
-        _mint(msg.sender,20);
+        _mint(msg.sender,20*10**18);
     }
 }

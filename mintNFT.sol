@@ -13,6 +13,37 @@ contract MyToken is ERC721, ERC721Enumerable, Ownable {
 
     constructor() ERC721("MyToken", "MTK") {}
 
+    struct message{
+        uint id;
+        address sneder;
+        uint nftID;
+        string sentMessage;
+        uint timestamp;
+    }
+
+    message[] public messages;
+
+    uint public totalMessages = 0;
+
+    function addMessage(string memory messageToSend, uint nftID) public returns(bool){
+        require(ownerOf(nftID) == msg.sender,"you do not own that nft");
+        messages.push(
+            message(
+                totalMessages,
+                msg.sender,
+                nftID,
+                messageToSend,
+                block.timestamp
+            )
+        );
+         totalMessages += 1;
+        return true;
+    }
+
+    function getMessage(uint index) public view returns(message memory){
+        return messages[index];
+    }
+
     function _baseURI() internal pure override returns (string memory) {
         return "google.com";
     }

@@ -26,4 +26,3 @@ function safeMint(address to) public onlyOwner{
     totalSupply++;
     _mint(to,tokenID);
 }
-}
